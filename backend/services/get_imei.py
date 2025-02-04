@@ -1,11 +1,12 @@
 import requests
 
 
-def get_imei(check_id):
+
+def get_imei(check_id, token):
     retrieve_url = f"https://api.imeicheck.net/v1/checks/{check_id}"
 
     headers = {
-        'Authorization': 'Bearer e4oEaZY1Kom5OXzybETkMlwjOCy3i8GSCGTHzWrhd4dc563b',
+        'Authorization': f'Bearer {token}',
         'Accept-Language': 'en',
     }
 

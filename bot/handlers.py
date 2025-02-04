@@ -3,7 +3,7 @@ import os
 
 import requests
 
-from aiogram import Router, F
+from aiogram import Router
 from aiogram.filters import CommandStart
 from aiogram.types import Message
 
@@ -14,26 +14,22 @@ from validation import validate_imei
 load_dotenv()
 router = Router()
 
-WHITE_LIST = {}
-
 
 @router.message(CommandStart())
 async def process_start_command(message: Message):
     await message.answer('Здравствуйте!\nДля получения информации отправьте ваш IMEI')
 
 
-@router.message(F.from_user.id.in_(WHITE_LIST))
+@router.message()
 async def process_message(message: Message):
     imei = message.text
 
-    if not validate_imei(imei):
-        await message.answer('У imei должно быть 15 цифр')
-
-    else:
+    if validate_imei(imei):
         url = 'http://127.0.0.1:5000/api/check-imei'
 
         header = {
             'Content-Type': 'application/json',
+            'X-Telegram-Bot': 'True'
         }
 
         body = json.dumps({
@@ -43,4 +39,8 @@ async def process_message(message: Message):
 
         response = requests.post(url, headers=header, data=body)
 
+
         await message.answer(response.text)
+
+    else:
+        await message.answer('У imei должно быть 15 цифр')
